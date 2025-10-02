@@ -4,32 +4,24 @@
 Replace linear WhatsApp group chat + public google sheet signup process for daily volunteer scheduling with a rules-driven user-friendly system that automates repetitive coordinator workflows. 
 
 ## Goals
-1. Systemize scheduling rules to ensure fair signups with no double bookings
-2. Automate reminders and log confirmations
-   2.1 Start of Week reminder
-   2.2 Day before confirmation (pop-up requesting confirmation)
-3. Make finding substitute volunteers easier
-   3.1 Providing easy status update options for users
-   3.2 Reduce Coordinator time spent and increase message response rate
-   3.3  Escalate urgency as time to dropped shift grows -- ending with --> Admin manual-approvals
-    3.3.1 Volunteer type and seniority filtered automated shift pick-up requests
-    3.3.2 Reliability Index calculations for each volunteer
-5. Provide more effective user interfaces with seamless adoption
-  4.1 Volunteer users
-   4.1.1 cleaner signups
-   4.1.2 rule-failure notification at signup time
-   4.1.3 Log-in and see next shift
-   4.1.4 Easily pick-up newly opened shifts
- 4.2 Coordinators and Adminstrators
-   4.2.1 dashboard for one-stop non-mandatory monitoring by top adminstrators
-   4.2.2 notification system based on currently assigned coordinators
-   4.2.3 Easy status and date filtering 
+- Enforce Scheduling Rules at Shift Signup
+- Automate Reminders and Acknowledgements
+- Provide coordinators with high-level visibility and tools for finding substitutes
+- Provide user interfaces with seamless scaling and adoption
 
 
-## Tech Stack (incremental)
-- **Phase 1:** Google Apps Script
-- **Phase 2:** Google AppSheet UI
-- **Phase 3:** React + Flask 
+
+## Tech Stack (incremental) 
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=000)](#)
+[![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=fff)](#) 
+![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?logo=whatsapp&logoColor=white)
+
+ [![Google](https://img.shields.io/badge/Google-4285F4?logo=google&logoColor=white)](#) Apps Script [![Twilio](https://img.shields.io/badge/Twilio-F22F46?style=for-the-badge&logo=Twilio&logoColor=white)](#)
+  
+[![Google](https://img.shields.io/badge/Google-4285F4?logo=google&logoColor=white)](#) AppSheet UI
+
+
+[![React](https://img.shields.io/badge/React-%2320232a.svg?logo=react&logoColor=%2361DAFB)](#) [![Flask](https://img.shields.io/badge/Flask-000?logo=flask&logoColor=fff)](#)
 
 
 ## Repo Structure
@@ -45,3 +37,4 @@ Replace linear WhatsApp group chat + public google sheet signup process for dail
 4. Document user testing + design patterns
 
 ## Screenshots/Demos
+
