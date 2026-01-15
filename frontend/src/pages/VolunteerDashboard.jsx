@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { shiftService } from '../services/shiftService'
 import { signupService } from '../services/signupService'
 import { volunteerService } from '../services/volunteerService'
+import ShiftCalendar from '../components/common/ShiftCalendar'
 
 export default function VolunteerDashboard() {
   const { user, volunteer, logout } = useAuth()
@@ -17,6 +18,7 @@ export default function VolunteerDashboard() {
   const [selectedShiftType, setSelectedShiftType] = useState('all')
   const [signingUp, setSigningUp] = useState(null)
   const [message, setMessage] = useState('')
+  const [viewMode, setViewMode] = useState('cards')
 
   useEffect(() => {
     loadData()
@@ -195,8 +197,46 @@ export default function VolunteerDashboard() {
         </div>
       )}
 
+      {/* View Mode Toggle */}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
+        <button
+          onClick={() => setViewMode('cards')}
+          style={{
+            backgroundColor: viewMode === 'cards' ? '#007bff' : '#e9ecef',
+            color: viewMode === 'cards' ? 'white' : '#333',
+            padding: '10px 20px',
+            borderRadius: '4px',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          Card View
+        </button>
+        <button
+          onClick={() => setViewMode('calendar')}
+          style={{
+            backgroundColor: viewMode === 'calendar' ? '#007bff' : '#e9ecef',
+            color: viewMode === 'calendar' ? 'white' : '#333',
+            padding: '10px 20px',
+            borderRadius: '4px',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          Calendar View
+        </button>
+      </div>
+
+      {/* Calendar View */}
+      {viewMode === 'calendar' && (
+        <div style={{ marginBottom: '40px' }}>
+          <h2 style={{ marginBottom: '20px' }}>Shift Calendar</h2>
+          <ShiftCalendar shifts={shifts} signups={mySignups} type="volunteer" />
+        </div>
+      )}
+
       {/* My Signups Section */}
-      {mySignups.length > 0 && (
+      {viewMode === 'cards' && mySignups.length > 0 && (
         <div style={{ marginBottom: '40px' }}>
           <h2 style={{ marginBottom: '20px' }}>My Signups</h2>
           <div style={{
@@ -256,6 +296,7 @@ export default function VolunteerDashboard() {
       )}
 
       {/* Available Shifts Section */}
+      {viewMode === 'cards' && (
       <div>
         <h2 style={{ marginBottom: '20px' }}>Available Shifts</h2>
 
@@ -353,6 +394,7 @@ export default function VolunteerDashboard() {
           </div>
         )}
       </div>
+      )}
     </div>
   )
 }

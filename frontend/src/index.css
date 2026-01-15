@@ -65,3 +65,89 @@ input:focus, textarea:focus, select:focus {
   padding: 20px;
   color: #666;
 }
+
+/* Calendar Styles */
+.rbc-calendar {
+  font-family: inherit;
+}
+
+.rbc-header {
+  padding: 12px 4px;
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #ddd;
+  font-weight: bold;
+  color: #333;
+}
+
+.rbc-off-range-bg {
+  background-color: #fafafa;
+}
+
+.rbc-today {
+  background-color: #f0f8ff;
+}
+
+.rbc-date-cell {
+  padding: 4px;
+  text-align: right;
+}
+
+.rbc-day-bg {
+  border-left: 1px solid #ddd;
+}
+
+.rbc-day-bg:last-child {
+  border-right: 1px solid #ddd;
+}
+
+.rbc-row {
+  border-top: 1px solid #ddd;
+  min-height: 80px;
+}
+
+.rbc-row-segment {
+  padding: 4px;
+}
+
+.rbc-event {
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.rbc-event-label {
+  font-size: 11px;
+}
+
+.rbc-toolbar {
+  padding: 15px 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.rbc-toolbar button {
+  background-color: #e9ecef;
+  color: #333;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.rbc-toolbar button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.rbc-toolbar-label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  min-width: 200px;
+  text-align: center;
+}

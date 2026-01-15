@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import api from '../services/api'
+import ShiftCalendar from '../components/common/ShiftCalendar'
 
 export default function CoordinatorDashboard() {
   const { logout } = useAuth()
   const [dashboard, setDashboard] = useState(null)
   const [shiftStatus, setShiftStatus] = useState([])
+  const [shifts, setShifts] = useState([])
+  const [allSignups, setAllSignups] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState('overview')
@@ -24,6 +27,13 @@ export default function CoordinatorDashboard() {
 
       const shiftsRes = await api.get('/coordinator/shifts/fill-status')
       setShiftStatus(shiftsRes.data)
+
+      // Fetch all shifts and signups for calendar view
+      const shiftsListRes = await api.get('/shifts')
+      setShifts(shiftsListRes.data)
+
+      const signupsRes = await api.get('/signups')
+      setAllSignups(signupsRes.data)
     } catch (err) {
       setError('Failed to load dashboard')
       console.error(err)
@@ -59,7 +69,7 @@ export default function CoordinatorDashboard() {
 
       {/* Tab Navigation */}
       <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', borderBottom: '2px solid #ddd' }}>
-        {['overview', 'shifts', 'volunteers'].map(tab => (
+        {['overview', 'shifts', 'calendar', 'volunteers'].map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -225,6 +235,14 @@ export default function CoordinatorDashboard() {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {/* Calendar Tab */}
+      {activeTab === 'calendar' && (
+        <div>
+          <h2 style={{ marginBottom: '20px' }}>Shift Calendar</h2>
+          <ShiftCalendar shifts={shifts} signups={allSignups} type="coordinator" />
         </div>
       )}
 
