@@ -90,10 +90,9 @@ input:focus, textarea:focus, select:focus {
 }
 
 .rbc-date-cell {
-  padding: 8px;
+  padding: 0;
   text-align: left;
   vertical-align: top;
-  min-height: 120px;
 }
 
 .rbc-day-bg {
@@ -106,7 +105,7 @@ input:focus, textarea:focus, select:focus {
 
 .rbc-row {
   border-top: 1px solid #ddd;
-  min-height: 140px;
+  min-height: 150px;
 }
 
 .rbc-row-segment {
