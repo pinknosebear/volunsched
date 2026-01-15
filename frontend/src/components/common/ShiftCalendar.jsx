@@ -16,6 +16,93 @@ const localizer = dateFnsLocalizer({
   locales,
 })
 
+// Custom day cell component for better visualization
+function DayCell({ dayShifts, type }) {
+  if (dayShifts.length === 0) {
+    return null
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      {dayShifts.map((shift, idx) => {
+        const signupCount = shift.resource.currentSignups
+        const capacity = shift.resource.capacity
+        const isFull = shift.resource.isFull
+        const isUnderstaffed = shift.resource.isUnderstaffed
+        const isUserSignedUp = shift.resource.isUserSignedUp
+
+        // Determine background color
+        let bgColor = '#e9ecef'
+        let textColor = '#666'
+        let borderColor = '#ddd'
+
+        if (type === 'volunteer') {
+          if (isUserSignedUp) {
+            bgColor = '#d4edda'
+            textColor = '#155724'
+            borderColor = '#28a745'
+          } else if (isFull) {
+            bgColor = '#e9ecef'
+            textColor = '#999'
+            borderColor = '#ddd'
+          } else if (isUnderstaffed) {
+            bgColor = '#fff3cd'
+            textColor = '#856404'
+            borderColor = '#ffc107'
+          } else {
+            bgColor = '#d1ecf1'
+            textColor = '#0c5460'
+            borderColor = '#17a2b8'
+          }
+        } else {
+          // coordinator view
+          if (isFull) {
+            bgColor = '#d4edda'
+            textColor = '#155724'
+            borderColor = '#28a745'
+          } else if (isUnderstaffed) {
+            bgColor = '#fff3cd'
+            textColor = '#856404'
+            borderColor = '#ffc107'
+          } else {
+            bgColor = '#e9ecef'
+            textColor = '#666'
+            borderColor = '#ddd'
+          }
+        }
+
+        return (
+          <div
+            key={idx}
+            style={{
+              backgroundColor: bgColor,
+              border: `2px solid ${borderColor}`,
+              borderRadius: '4px',
+              padding: '6px 8px',
+              fontSize: '11px',
+              color: textColor,
+              fontWeight: 'bold',
+            }}
+          >
+            <div style={{ marginBottom: '3px' }}>{shift.resource.shift_type}</div>
+            <div style={{ fontSize: '10px', fontWeight: 'normal' }}>
+              {signupCount}/{capacity} signed up
+            </div>
+            <div style={{
+              fontSize: '9px',
+              marginTop: '2px',
+              fontWeight: 'normal',
+              opacity: 0.8
+            }}>
+              {isFull ? '✓ Full' : isUnderstaffed ? '⚠ Understaffed' : 'Available'}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 export default function ShiftCalendar({ shifts, signups, type = 'volunteer' }) {
   const [selectedEvent, setSelectedEvent] = useState(null)
 
@@ -43,7 +130,7 @@ export default function ShiftCalendar({ shifts, signups, type = 'volunteer' }) {
 
       return {
         id: shift.id,
-        title: `${shift.shift_type} (${signupCount}/${shift.capacity})`,
+        title: `${shift.shift_type}`,
         start: new Date(shift.date),
         end: new Date(shift.date),
         resource: {
@@ -58,75 +145,50 @@ export default function ShiftCalendar({ shifts, signups, type = 'volunteer' }) {
     })
   }, [shifts, signups, type])
 
-  const eventStyleGetter = (event) => {
-    let backgroundColor = '#e9ecef'
-    let borderColor = '#ddd'
-    let color = '#333'
+  // Group events by day for custom rendering
+  const eventsByDate = useMemo(() => {
+    const grouped = {}
+    events.forEach(event => {
+      const dateKey = event.start.toISOString().split('T')[0]
+      if (!grouped[dateKey]) {
+        grouped[dateKey] = []
+      }
+      grouped[dateKey].push(event)
+    })
+    return grouped
+  }, [events])
 
-    if (type === 'volunteer') {
-      if (event.resource.isUserSignedUp) {
-        // User is signed up for this shift - highlight in green
-        backgroundColor = '#d4edda'
-        borderColor = '#28a745'
-        color = '#155724'
-      } else if (event.resource.isFull) {
-        // Shift is full but user isn't signed up - gray out
-        backgroundColor = '#e9ecef'
-        borderColor = '#ddd'
-        color = '#999'
-      } else if (event.resource.isUnderstaffed) {
-        // Shift is understaffed - yellow
-        backgroundColor = '#fff3cd'
-        borderColor = '#ffc107'
-        color = '#856404'
-      } else if (event.resource.isAvailable) {
-        // Shift is available - blue
-        backgroundColor = '#d1ecf1'
-        borderColor = '#17a2b8'
-        color = '#0c5460'
-      }
-    } else if (type === 'coordinator') {
-      if (event.resource.isFull) {
-        backgroundColor = '#d4edda'
-        borderColor = '#28a745'
-        color = '#155724'
-      } else if (event.resource.isUnderstaffed) {
-        backgroundColor = '#fff3cd'
-        borderColor = '#ffc107'
-        color = '#856404'
-      } else {
-        backgroundColor = '#e9ecef'
-        borderColor = '#ddd'
-        color = '#666'
-      }
-    }
+  const CustomDateCellWrapper = (props) => {
+    const dateKey = props.value.toISOString().split('T')[0]
+    const dayShifts = eventsByDate[dateKey] || []
 
-    return {
-      style: {
-        backgroundColor,
-        borderRadius: '4px',
-        opacity: 0.9,
-        color,
-        border: `2px solid ${borderColor}`,
-        display: 'block',
-        padding: '4px 6px',
-        fontSize: '12px',
-      }
-    }
+    return (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
+          {props.value.getDate()}
+        </div>
+        <div style={{ flex: 1, overflow: 'auto', fontSize: '11px' }}>
+          <DayCell dayShifts={dayShifts} type={type} />
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div style={{ height: '600px', marginBottom: '20px' }}>
+    <div style={{ height: '700px', marginBottom: '20px' }}>
       <Calendar
         localizer={localizer}
         events={events}
         startAccessor="start"
         endAccessor="end"
         style={{ height: '100%' }}
-        eventPropGetter={eventStyleGetter}
+        view="month"
+        defaultView="month"
         onSelectEvent={(event) => setSelectedEvent(event)}
+        components={{
+          dateCellWrapper: CustomDateCellWrapper,
+        }}
         popup
-        selectable
       />
 
       {selectedEvent && (

@@ -69,14 +69,16 @@ input:focus, textarea:focus, select:focus {
 /* Calendar Styles */
 .rbc-calendar {
   font-family: inherit;
+  background-color: white;
 }
 
 .rbc-header {
-  padding: 12px 4px;
+  padding: 12px 8px;
   background-color: #f8f9fa;
   border-bottom: 2px solid #ddd;
   font-weight: bold;
   color: #333;
+  font-size: 13px;
 }
 
 .rbc-off-range-bg {
@@ -88,8 +90,10 @@ input:focus, textarea:focus, select:focus {
 }
 
 .rbc-date-cell {
-  padding: 4px;
-  text-align: right;
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+  min-height: 120px;
 }
 
 .rbc-day-bg {
@@ -102,17 +106,18 @@ input:focus, textarea:focus, select:focus {
 
 .rbc-row {
   border-top: 1px solid #ddd;
-  min-height: 80px;
+  min-height: 140px;
 }
 
 .rbc-row-segment {
-  padding: 4px;
+  padding: 0;
 }
 
 .rbc-event {
   padding: 4px;
   border-radius: 4px;
   font-size: 12px;
+  display: none;
 }
 
 .rbc-event-label {
@@ -126,6 +131,7 @@ input:focus, textarea:focus, select:focus {
   justify-content: center;
   align-items: center;
   gap: 10px;
+  margin-bottom: 20px;
 }
 
 .rbc-toolbar button {
@@ -139,7 +145,8 @@ input:focus, textarea:focus, select:focus {
   transition: all 0.3s ease;
 }
 
-.rbc-toolbar button:hover {
+.rbc-toolbar button:hover,
+.rbc-toolbar button.rbc-active {
   background-color: #007bff;
   color: white;
 }
@@ -148,6 +155,13 @@ input:focus, textarea:focus, select:focus {
   font-size: 16px;
   font-weight: bold;
   color: #333;
-  min-width: 200px;
+  min-width: 250px;
   text-align: center;
+}
+
+.rbc-month-view {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
 }
