@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import Button from '../components/common/Button'
+import Input from '../components/common/Input'
+import Alert from '../components/common/Alert'
+import { colors, spacing, typography } from '../theme'
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true)
@@ -55,129 +59,160 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
-      <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', width: '100%', maxWidth: '400px' }}>
-        <h1 style={{ textAlign: 'center', marginBottom: '30px', color: '#333' }}>
-          {isLogin ? 'Login' : 'Sign Up'}
-        </h1>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
+      backgroundColor: colors.surface,
+      padding: spacing.md,
+    }}>
+      <div style={{
+        backgroundColor: colors.background,
+        padding: spacing.xl,
+        borderRadius: '12px',
+        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+        width: '100%',
+        maxWidth: '420px',
+      }}>
+        <div style={{ marginBottom: spacing.lg, textAlign: 'center' }}>
+          <h1 style={{
+            fontSize: typography['2xl'],
+            fontWeight: typography.bold,
+            color: colors.text,
+            margin: 0,
+            marginBottom: spacing.sm,
+          }}>
+            Volunteer Scheduling
+          </h1>
+          <p style={{
+            fontSize: typography.sm,
+            color: colors.textSecondary,
+            margin: 0,
+            marginBottom: spacing.lg,
+          }}>
+            {isLogin ? 'Welcome back' : 'Create your account'}
+          </p>
+        </div>
 
         {error && (
-          <div style={{ backgroundColor: '#f8d7da', color: '#721c24', padding: '12px', borderRadius: '4px', marginBottom: '20px', fontSize: '14px' }}>
-            {error}
+          <div style={{ marginBottom: spacing.lg }}>
+            <Alert variant="error" onDismiss={() => setError('')}>
+              {error}
+            </Alert>
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>
-              Username
-            </label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-              style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}
-            />
-          </div>
+          <Input
+            label="Username"
+            name="username"
+            type="text"
+            value={formData.username}
+            onChange={handleChange}
+            placeholder="Enter your username"
+            required
+            disabled={loading}
+          />
 
           {!isLogin && (
             <>
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required={!isLogin}
-                  style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}
-                />
-              </div>
+              <Input
+                label="Full Name"
+                name="name"
+                type="text"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Your full name"
+                required={!isLogin}
+                disabled={loading}
+              />
 
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>
-                  Phone
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required={!isLogin}
-                  style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}
-                />
-              </div>
+              <Input
+                label="Phone"
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="e.g. +1 (555) 123-4567"
+                required={!isLogin}
+                disabled={loading}
+                helpText="Include country code"
+              />
 
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>
-                  Email (Optional)
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}
-                />
-              </div>
+              <Input
+                label="Email (Optional)"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="your@email.com"
+                disabled={loading}
+              />
             </>
           )}
 
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}
-            />
-          </div>
+          <Input
+            label="Password"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Enter your password"
+            required
+            disabled={loading}
+          />
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            style={{
-              width: '100%',
-              padding: '12px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1
-            }}
+            fullWidth
+            size="lg"
+            style={{ marginTop: spacing.lg }}
           >
-            {loading ? 'Please wait...' : isLogin ? 'Login' : 'Sign Up'}
-          </button>
+            {loading ? 'Please wait...' : isLogin ? 'Sign In' : 'Create Account'}
+          </Button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px', color: '#666' }}>
-          {isLogin ? "Don't have an account? " : 'Already have an account? '}
-          <button
-            type="button"
-            onClick={() => setIsLogin(!isLogin)}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#007bff',
-              cursor: 'pointer',
-              textDecoration: 'underline',
-              fontSize: '14px'
-            }}
-          >
-            {isLogin ? 'Sign Up' : 'Login'}
-          </button>
-        </p>
+        <div style={{
+          marginTop: spacing.lg,
+          paddingTop: spacing.lg,
+          borderTop: `1px solid ${colors.border}`,
+          textAlign: 'center',
+        }}>
+          <p style={{
+            fontSize: typography.sm,
+            color: colors.textSecondary,
+            margin: 0,
+          }}>
+            {isLogin ? "Don't have an account? " : 'Already have an account? '}
+            <button
+              type="button"
+              onClick={() => {
+                setIsLogin(!isLogin)
+                setError('')
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: colors.primary,
+                cursor: 'pointer',
+                fontSize: typography.sm,
+                fontWeight: typography.semibold,
+                textDecoration: 'none',
+                padding: 0,
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.textDecoration = 'underline'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.textDecoration = 'none'
+              }}
+            >
+              {isLogin ? 'Sign up' : 'Sign in'}
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   )

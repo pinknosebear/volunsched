@@ -5,6 +5,11 @@ import { shiftService } from '../services/shiftService'
 import { signupService } from '../services/signupService'
 import { volunteerService } from '../services/volunteerService'
 import ShiftCalendar from '../components/common/ShiftCalendar'
+import Button from '../components/common/Button'
+import Card from '../components/common/Card'
+import Badge from '../components/common/Badge'
+import Alert from '../components/common/Alert'
+import { colors, spacing, typography } from '../theme'
 
 export default function VolunteerDashboard() {
   const { user, volunteer, logout } = useAuth()
@@ -100,7 +105,17 @@ export default function VolunteerDashboard() {
   }
 
   if (loading) {
-    return <div className="container"><div className="loading">Loading...</div></div>
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        backgroundColor: colors.surface
+      }}>
+        <div style={{ fontSize: typography.lg, color: colors.textSecondary }}>Loading...</div>
+      </div>
+    )
   }
 
   const filteredShifts = selectedShiftType === 'all'
@@ -110,291 +125,329 @@ export default function VolunteerDashboard() {
   const mySignupIds = new Set(mySignups.map(s => s.shift_id))
 
   return (
-    <div className="container">
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', borderBottom: '1px solid #ddd', paddingBottom: '20px' }}>
-        <div>
-          <h1>Volunteer Dashboard</h1>
-          <p style={{ color: '#666', marginTop: '5px' }}>Welcome, {volunteer?.name}!</p>
-        </div>
-        <button
-          onClick={logout}
-          style={{ backgroundColor: '#dc3545', color: 'white', padding: '10px 20px' }}
-        >
-          Logout
-        </button>
-      </header>
-
-      {error && (
-        <div style={{ backgroundColor: '#f8d7da', color: '#721c24', padding: '12px', borderRadius: '4px', marginBottom: '20px' }}>
-          {error}
-        </div>
-      )}
-
-      {message && (
-        <div style={{
-          backgroundColor: message.startsWith('✓') ? '#d4edda' : '#f8d7da',
-          color: message.startsWith('✓') ? '#155724' : '#721c24',
-          padding: '12px',
-          borderRadius: '4px',
-          marginBottom: '20px'
+    <div style={{
+      backgroundColor: colors.surface,
+      minHeight: '100vh',
+      padding: spacing.xl,
+    }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        {/* Header */}
+        <header style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          marginBottom: spacing.xl,
+          paddingBottom: spacing.lg,
+          borderBottom: `1px solid ${colors.border}`,
         }}>
-          {message}
-        </div>
-      )}
-
-      {/* Stats Section */}
-      {stats && (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '20px',
-          marginBottom: '30px'
-        }}>
-          <div style={{
-            backgroundColor: '#f8f9fa',
-            padding: '20px',
-            borderRadius: '8px',
-            border: '1px solid #ddd'
-          }}>
-            <div style={{ color: '#666', fontSize: '12px', marginBottom: '5px' }}>Kakad Shifts</div>
-            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#007bff' }}>
-              {stats.kakad_signups}/{2}
-            </div>
-            <div style={{ color: '#999', fontSize: '12px', marginTop: '5px' }}>
-              {stats.kakad_remaining} remaining
-            </div>
+          <div>
+            <h1 style={{
+              fontSize: typography['3xl'],
+              fontWeight: typography.bold,
+              color: colors.text,
+              margin: 0,
+              marginBottom: spacing.sm,
+            }}>
+              Volunteer Dashboard
+            </h1>
+            <p style={{
+              fontSize: typography.sm,
+              color: colors.textSecondary,
+              margin: 0,
+            }}>
+              Welcome, {volunteer?.name}!
+            </p>
           </div>
+          <Button
+            variant="danger"
+            onClick={logout}
+          >
+            Logout
+          </Button>
+        </header>
 
-          <div style={{
-            backgroundColor: '#f8f9fa',
-            padding: '20px',
-            borderRadius: '8px',
-            border: '1px solid #ddd'
-          }}>
-            <div style={{ color: '#666', fontSize: '12px', marginBottom: '5px' }}>Total Signups</div>
-            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#28a745' }}>
-              {stats.total_signups}/{4}
-            </div>
-            <div style={{ color: '#999', fontSize: '12px', marginTop: '5px' }}>
-              {stats.total_remaining} remaining
-            </div>
+        {error && (
+          <div style={{ marginBottom: spacing.lg }}>
+            <Alert variant="error" onDismiss={() => setError('')}>
+              {error}
+            </Alert>
           </div>
+        )}
 
-          <div style={{
-            backgroundColor: '#f8f9fa',
-            padding: '20px',
-            borderRadius: '8px',
-            border: '1px solid #ddd'
-          }}>
-            <div style={{ color: '#666', fontSize: '12px', marginBottom: '5px' }}>Thursday Shifts</div>
-            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#ffc107' }}>
-              {stats.thursday_signups}/{2}
-            </div>
-            <div style={{ color: '#999', fontSize: '12px', marginTop: '5px' }}>
-              {stats.thursday_remaining} remaining
-            </div>
+        {message && (
+          <div style={{ marginBottom: spacing.lg }}>
+            <Alert
+              variant={message.startsWith('✓') ? 'success' : 'error'}
+              onDismiss={() => setMessage('')}
+            >
+              {message}
+            </Alert>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* View Mode Toggle */}
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
-        <button
-          onClick={() => setViewMode('cards')}
-          style={{
-            backgroundColor: viewMode === 'cards' ? '#007bff' : '#e9ecef',
-            color: viewMode === 'cards' ? 'white' : '#333',
-            padding: '10px 20px',
-            borderRadius: '4px',
-            border: 'none',
-            cursor: 'pointer'
-          }}
-        >
-          Card View
-        </button>
-        <button
-          onClick={() => setViewMode('calendar')}
-          style={{
-            backgroundColor: viewMode === 'calendar' ? '#007bff' : '#e9ecef',
-            color: viewMode === 'calendar' ? 'white' : '#333',
-            padding: '10px 20px',
-            borderRadius: '4px',
-            border: 'none',
-            cursor: 'pointer'
-          }}
-        >
-          Calendar View
-        </button>
-      </div>
-
-      {/* Calendar View */}
-      {viewMode === 'calendar' && (
-        <div style={{ marginBottom: '40px' }}>
-          <h2 style={{ marginBottom: '20px' }}>Shift Calendar</h2>
-          <ShiftCalendar shifts={shifts} signups={mySignups} type="volunteer" />
-        </div>
-      )}
-
-      {/* My Signups Section */}
-      {viewMode === 'cards' && mySignups.length > 0 && (
-        <div style={{ marginBottom: '40px' }}>
-          <h2 style={{ marginBottom: '20px' }}>My Signups</h2>
+        {/* Stats Section */}
+        {stats && (
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-            gap: '15px'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: spacing.lg,
+            marginBottom: spacing.xl
           }}>
-            {mySignups.map(signup => (
-              <div key={signup.id} style={{
-                backgroundColor: 'white',
-                padding: '15px',
-                borderRadius: '8px',
-                border: '2px solid #28a745'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '10px' }}>
-                  <div>
-                    <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
-                      {signup.shift.shift_type}
-                    </div>
-                    <div style={{ color: '#666', fontSize: '14px' }}>
-                      {new Date(signup.shift.date).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                    </div>
-                  </div>
-                  <span style={{
-                    backgroundColor: '#28a745',
-                    color: 'white',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    fontSize: '12px'
-                  }}>
-                    {signup.status}
-                  </span>
+            {[
+              { label: 'Kakad Shifts', current: stats.kakad_signups, max: 2, remaining: stats.kakad_remaining, color: colors.primary },
+              { label: 'Total Signups', current: stats.total_signups, max: 4, remaining: stats.total_remaining, color: colors.success },
+              { label: 'Thursday Shifts', current: stats.thursday_signups, max: 2, remaining: stats.thursday_remaining, color: colors.warning }
+            ].map((stat, idx) => (
+              <Card key={idx} elevated>
+                <div style={{
+                  fontSize: typography.xs,
+                  color: colors.textSecondary,
+                  marginBottom: spacing.md,
+                  fontWeight: typography.semibold,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
+                }}>
+                  {stat.label}
                 </div>
-                <button
-                  onClick={() => handleCancelSignup(signup.id)}
-                  style={{
-                    width: '100%',
-                    backgroundColor: '#dc3545',
-                    color: 'white',
-                    padding: '8px',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '13px'
-                  }}
-                >
-                  Cancel Signup
-                </button>
-              </div>
+                <div style={{
+                  fontSize: typography['2xl'],
+                  fontWeight: typography.bold,
+                  color: stat.color,
+                  marginBottom: spacing.md,
+                }}>
+                  {stat.current}<span style={{ color: colors.textSecondary, fontSize: typography.lg }}> / {stat.max}</span>
+                </div>
+                <div style={{
+                  fontSize: typography.xs,
+                  color: stat.remaining > 0 ? colors.success : colors.danger,
+                  fontWeight: typography.semibold,
+                }}>
+                  {stat.remaining} {stat.remaining === 1 ? 'slot' : 'slots'} remaining
+                </div>
+              </Card>
             ))}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Available Shifts Section */}
-      {viewMode === 'cards' && (
-      <div>
-        <h2 style={{ marginBottom: '20px' }}>Available Shifts</h2>
-
-        <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
-          {['all', 'Kakad', 'Robes'].map(type => (
+        {/* View Mode Toggle */}
+        <div style={{
+          display: 'flex',
+          gap: spacing.md,
+          marginBottom: spacing.xl,
+          borderBottom: `1px solid ${colors.border}`,
+        }}>
+          {['cards', 'calendar'].map(mode => (
             <button
-              key={type}
-              onClick={() => setSelectedShiftType(type)}
+              key={mode}
+              onClick={() => setViewMode(mode)}
               style={{
-                backgroundColor: selectedShiftType === type ? '#007bff' : '#e9ecef',
-                color: selectedShiftType === type ? 'white' : '#333',
-                padding: '10px 20px',
-                borderRadius: '4px',
+                backgroundColor: viewMode === mode ? colors.primary : 'transparent',
+                color: viewMode === mode ? 'white' : colors.textSecondary,
+                padding: `${spacing.md} ${spacing.lg}`,
                 border: 'none',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                fontSize: typography.sm,
+                fontWeight: typography.semibold,
+                textTransform: 'capitalize',
+                transition: `all 200ms ease-in-out`,
+                borderBottom: viewMode === mode ? `3px solid ${colors.primary}` : 'none',
+                marginBottom: '-1px',
               }}
             >
-              {type === 'all' ? 'All Shifts' : type}
+              {mode === 'cards' ? 'Card View' : 'Calendar View'}
             </button>
           ))}
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-          gap: '15px'
-        }}>
-          {filteredShifts.map(shift => {
-            const isSignedUp = mySignupIds.has(shift.id)
-            const isFull = shift.current_signups >= shift.capacity
+        {/* Calendar View */}
+        {viewMode === 'calendar' && (
+          <div style={{ marginBottom: spacing.xl }}>
+            <h2 style={{
+              fontSize: typography['2xl'],
+              fontWeight: typography.bold,
+              color: colors.text,
+              marginBottom: spacing.lg,
+              margin: 0,
+              marginBottom: spacing.lg,
+            }}>
+              Shift Calendar
+            </h2>
+            <ShiftCalendar shifts={shifts} signups={mySignups} type="volunteer" />
+          </div>
+        )}
 
-            return (
-              <div key={shift.id} style={{
-                backgroundColor: isSignedUp ? '#d1ecf1' : 'white',
-                padding: '15px',
-                borderRadius: '8px',
-                border: `2px solid ${isSignedUp ? '#17a2b8' : '#ddd'}`,
-                opacity: isFull ? 0.6 : 1
-              }}>
-                <div style={{ marginBottom: '10px' }}>
-                  <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
-                    {shift.shift_type}
+        {/* My Signups Section */}
+        {viewMode === 'cards' && mySignups.length > 0 && (
+          <div style={{ marginBottom: spacing.xl }}>
+            <h2 style={{
+              fontSize: typography['2xl'],
+              fontWeight: typography.bold,
+              color: colors.text,
+              marginBottom: spacing.lg,
+              margin: 0,
+              marginBottom: spacing.lg,
+            }}>
+              My Signups
+            </h2>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: spacing.lg
+            }}>
+              {mySignups.map(signup => (
+                <Card key={signup.id} elevated>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: spacing.md }}>
+                    <div>
+                      <div style={{
+                        fontWeight: typography.semibold,
+                        fontSize: typography.lg,
+                        color: colors.text,
+                      }}>
+                        {signup.shift.shift_type}
+                      </div>
+                      <div style={{
+                        color: colors.textSecondary,
+                        fontSize: typography.sm,
+                        marginTop: spacing.xs,
+                      }}>
+                        {new Date(signup.shift.date).toLocaleDateString('en-US', {
+                          weekday: 'short',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </div>
+                    </div>
+                    <Badge variant="success" size="sm">
+                      {signup.status}
+                    </Badge>
                   </div>
-                  <div style={{ color: '#666', fontSize: '14px', marginTop: '5px' }}>
-                    {new Date(shift.date).toLocaleDateString('en-US', {
-                      weekday: 'long',
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </div>
-                  <div style={{ color: '#999', fontSize: '12px', marginTop: '5px' }}>
-                    {shift.current_signups}/{shift.capacity} signed up
-                  </div>
-                </div>
-
-                {isSignedUp && (
-                  <div style={{
-                    backgroundColor: '#17a2b8',
-                    color: 'white',
-                    padding: '6px 10px',
-                    borderRadius: '4px',
-                    fontSize: '12px',
-                    textAlign: 'center'
-                  }}>
-                    ✓ You're signed up
-                  </div>
-                )}
-
-                {!isSignedUp && (
-                  <button
-                    onClick={() => handleSignup(shift.id)}
-                    disabled={isFull || signingUp === shift.id}
-                    style={{
-                      width: '100%',
-                      backgroundColor: isFull ? '#ccc' : '#007bff',
-                      color: 'white',
-                      padding: '10px',
-                      borderRadius: '4px',
-                      border: 'none',
-                      cursor: isFull ? 'not-allowed' : 'pointer',
-                      opacity: signingUp === shift.id ? 0.7 : 1
-                    }}
+                  <Button
+                    variant="danger"
+                    fullWidth
+                    size="sm"
+                    onClick={() => handleCancelSignup(signup.id)}
                   >
-                    {signingUp === shift.id ? 'Signing up...' : isFull ? 'Shift Full' : 'Sign Up'}
-                  </button>
-                )}
-              </div>
-            )
-          })}
-        </div>
+                    Cancel Signup
+                  </Button>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
-        {filteredShifts.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-            No shifts available for the selected filter.
+        {/* Available Shifts Section */}
+        {viewMode === 'cards' && (
+          <div>
+            <h2 style={{
+              fontSize: typography['2xl'],
+              fontWeight: typography.bold,
+              color: colors.text,
+              marginBottom: spacing.lg,
+              margin: 0,
+              marginBottom: spacing.lg,
+            }}>
+              Available Shifts
+            </h2>
+
+            <div style={{
+              marginBottom: spacing.lg,
+              display: 'flex',
+              gap: spacing.md,
+              flexWrap: 'wrap',
+            }}>
+              {['all', 'Kakad', 'Robes'].map(type => (
+                <button
+                  key={type}
+                  onClick={() => setSelectedShiftType(type)}
+                  style={{
+                    backgroundColor: selectedShiftType === type ? colors.primary : colors.surface,
+                    color: selectedShiftType === type ? 'white' : colors.textSecondary,
+                    padding: `${spacing.sm} ${spacing.md}`,
+                    borderRadius: borderRadius.lg,
+                    border: `1px solid ${selectedShiftType === type ? colors.primary : colors.border}`,
+                    cursor: 'pointer',
+                    fontSize: typography.sm,
+                    fontWeight: typography.semibold,
+                    transition: `all 200ms ease-in-out`,
+                  }}
+                >
+                  {type === 'all' ? 'All Shifts' : type}
+                </button>
+              ))}
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: spacing.lg
+            }}>
+              {filteredShifts.map(shift => {
+                const isSignedUp = mySignupIds.has(shift.id)
+                const isFull = shift.current_signups >= shift.capacity
+
+                return (
+                  <Card key={shift.id} variant={isSignedUp ? 'accent' : 'default'} style={{ opacity: isFull ? 0.7 : 1 }} elevated>
+                    <div style={{ marginBottom: spacing.md }}>
+                      <div style={{
+                        fontWeight: typography.semibold,
+                        fontSize: typography.lg,
+                        color: colors.text,
+                      }}>
+                        {shift.shift_type}
+                      </div>
+                      <div style={{
+                        color: colors.textSecondary,
+                        fontSize: typography.sm,
+                        marginTop: spacing.xs,
+                      }}>
+                        {new Date(shift.date).toLocaleDateString('en-US', {
+                          weekday: 'short',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </div>
+                      <div style={{
+                        color: colors.textTertiary,
+                        fontSize: typography.xs,
+                        marginTop: spacing.xs,
+                        fontWeight: typography.medium,
+                      }}>
+                        {shift.current_signups}/{shift.capacity} signed up
+                      </div>
+                    </div>
+
+                    {isSignedUp && (
+                      <Badge variant="success" fullWidth style={{ width: '100%', justifyContent: 'center' }}>
+                        ✓ You're signed up
+                      </Badge>
+                    )}
+
+                    {!isSignedUp && (
+                      <Button
+                        onClick={() => handleSignup(shift.id)}
+                        disabled={isFull || signingUp === shift.id}
+                        fullWidth
+                        variant={isFull ? 'secondary' : 'primary'}
+                        size="sm"
+                      >
+                        {signingUp === shift.id ? 'Signing up...' : isFull ? 'Shift Full' : 'Sign Up'}
+                      </Button>
+                    )}
+                  </Card>
+                )
+              })}
+            </div>
+
+            {filteredShifts.length === 0 && (
+              <Card variant="surface" style={{ textAlign: 'center', padding: spacing.xl }}>
+                <div style={{ color: colors.textSecondary }}>
+                  No shifts available for the selected filter.
+                </div>
+              </Card>
+            )}
           </div>
         )}
       </div>
-      )}
     </div>
   )
 }
