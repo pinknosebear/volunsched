@@ -21,51 +21,83 @@ export default function ShiftCalendar({ shifts, signups, type = 'volunteer' }) {
 
   const events = useMemo(() => {
     return shifts.map(shift => {
-      const signedUpVolunteers = signups.filter(s => s.shift_id === shift.id)
-      const isFull = signedUpVolunteers.length >= shift.capacity
-      const isUnderstaffed = signedUpVolunteers.length < shift.capacity && signedUpVolunteers.length > 0
+      let signupCount = 0
+      let isUserSignedUp = false
+
+      if (type === 'volunteer') {
+        // For volunteer view: signups is an array of user's own signups with nested shift object
+        signupCount = signups.filter(s => {
+          if (s.shift && s.shift.id === shift.id) {
+            isUserSignedUp = true
+            return true
+          }
+          return false
+        }).length
+      } else {
+        // For coordinator view: signups is an array of all signups with shift_id field
+        signupCount = signups.filter(s => s.shift_id === shift.id || (s.shift && s.shift.id === shift.id)).length
+      }
+
+      const isFull = signupCount >= shift.capacity
+      const isUnderstaffed = signupCount < shift.capacity && signupCount > 0
 
       return {
         id: shift.id,
-        title: `${shift.shift_type} (${signedUpVolunteers.length}/${shift.capacity})`,
+        title: `${shift.shift_type} (${signupCount}/${shift.capacity})`,
         start: new Date(shift.date),
         end: new Date(shift.date),
         resource: {
           ...shift,
-          currentSignups: signedUpVolunteers.length,
+          currentSignups: signupCount,
           isFull,
           isUnderstaffed,
-          isAvailable: signedUpVolunteers.length === 0,
+          isAvailable: signupCount === 0,
+          isUserSignedUp,
         }
       }
     })
-  }, [shifts, signups])
+  }, [shifts, signups, type])
 
   const eventStyleGetter = (event) => {
     let backgroundColor = '#e9ecef'
     let borderColor = '#ddd'
+    let color = '#333'
 
     if (type === 'volunteer') {
-      if (event.resource.isFull) {
+      if (event.resource.isUserSignedUp) {
+        // User is signed up for this shift - highlight in green
         backgroundColor = '#d4edda'
         borderColor = '#28a745'
+        color = '#155724'
+      } else if (event.resource.isFull) {
+        // Shift is full but user isn't signed up - gray out
+        backgroundColor = '#e9ecef'
+        borderColor = '#ddd'
+        color = '#999'
       } else if (event.resource.isUnderstaffed) {
+        // Shift is understaffed - yellow
         backgroundColor = '#fff3cd'
         borderColor = '#ffc107'
+        color = '#856404'
       } else if (event.resource.isAvailable) {
+        // Shift is available - blue
         backgroundColor = '#d1ecf1'
         borderColor = '#17a2b8'
+        color = '#0c5460'
       }
     } else if (type === 'coordinator') {
       if (event.resource.isFull) {
         backgroundColor = '#d4edda'
         borderColor = '#28a745'
+        color = '#155724'
       } else if (event.resource.isUnderstaffed) {
         backgroundColor = '#fff3cd'
         borderColor = '#ffc107'
+        color = '#856404'
       } else {
         backgroundColor = '#e9ecef'
         borderColor = '#ddd'
+        color = '#666'
       }
     }
 
@@ -74,7 +106,7 @@ export default function ShiftCalendar({ shifts, signups, type = 'volunteer' }) {
         backgroundColor,
         borderRadius: '4px',
         opacity: 0.9,
-        color: '#333',
+        color,
         border: `2px solid ${borderColor}`,
         display: 'block',
         padding: '4px 6px',
