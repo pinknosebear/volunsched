@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(find:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2ODQ0MTg4MiwianRpIjoiMWQyYmE4YzYtMmI1OS00NzMyLTgwOTItNmY3MWFkMzIwMWYwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNzY4NDQxODgyLCJjc3JmIjoiOGVkNjQzN2QtZmQwNi00NmJhLWJkZGItZGQ1M2JjZTJjZmI3IiwiZXhwIjoxNzcxMDMzODgyfQ.9SLLmmJij4BtujjlWXz8TIE069ovBODlRX3suP0x5EU\")",
+      "Bash(__NEW_LINE_2bc9dea427387ed7__ curl -s http://localhost:5001/api/shifts -H \"Authorization: Bearer $TOKEN\")",
+      "Bash(curl:*)",
+      "Bash(lsof:*)",
+      "Bash(source:*)",
+      "Bash(python3:*)"
     ]
   }
 }
